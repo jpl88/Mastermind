@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class Mastermind {
 	
-//	private final String SECRETCODE;
+	private final String SECRETCODE;
 //	private final int NUMCHANCES;
 	
 	//Fields that are used to avoid "Magic Number's" throughout code. If implementation were to change for and acceptable secret code.
@@ -21,6 +21,8 @@ public class Mastermind {
 	
 	public Mastermind(){
 		printInstructions();
+		SECRETCODE = generateSecretCode();
+		
 	}
 	
 	private static void printInstructions(){
@@ -35,6 +37,15 @@ public class Mastermind {
 				+ "One for each of the exact matches in the first, third and fourth positions.\n"
 				+ "The number match in the second position would be ignored.\n");
 	}
+	
+	private String generateSecretCode(){
+		StringBuilder sb = new StringBuilder();
+		Random r = new Random();
+		for(int i = 0; i < CODELENGTH; i++) sb.append(Character.forDigit((r.nextInt(MAX-MIN) + MIN), 10));
+		return sb.toString();
+	}
+	
+
 	
 	
 	
