@@ -11,7 +11,7 @@ import java.util.Random;
 public class Mastermind {
 	
 	private final String SECRETCODE;
-//	private final int NUMCHANCES;
+	private final int NUMCHANCES;
 	
 	//Fields that are used to avoid "Magic Number's" throughout code. If implementation were to change for and acceptable secret code.
 	private final int MIN = 1;
@@ -22,7 +22,7 @@ public class Mastermind {
 	public Mastermind(){
 		printInstructions();
 		SECRETCODE = generateSecretCode();
-		
+		NUMCHANCES = generateNumChances();
 	}
 	
 	private static void printInstructions(){
@@ -45,9 +45,33 @@ public class Mastermind {
 		return sb.toString();
 	}
 	
-
+	private int generateNumChances(){
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int numChances;
+		while(true){
+			System.out.println("Enter the number of chances allowed to figure out the secret code.");
+			try{
+				numChances = Integer.parseInt(br.readLine());
+				numChancesIsValid(numChances);
+				return numChances;
+			}
+			catch(IOException e){
+				System.out.println("Error reading your inout please try again.");
+			}
+			catch(NumberFormatException e){
+				System.out.println("Your input of was not an Integer.");
+			}
+			catch(IllegalStateException e){
+				System.out.println("Youe input wasn't greater than 0.");
+			}
+		}
+		
+	}
 	
-	
+	private boolean numChancesIsValid(int numChances) throws IllegalStateException{
+		if(numChances < Integer.MAX_VALUE && numChances > 0) return true;
+		else throw new IllegalStateException();
+	}
 	
 	public static void main(String[] args){
 		Mastermind m = new Mastermind();
