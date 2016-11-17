@@ -66,42 +66,110 @@ public class Mastermind {
 		}
 	}
 	
+	/*********************************************
+	 *****generateNumChances() Helper Methods*****
+	 *********************************************/
+	
 	private boolean numChancesIsValid(int numChances) throws IllegalStateException{
 		if(numChances < Integer.MAX_VALUE && numChances > 0) return true;
 		else throw new IllegalStateException();
 	}
 	
 	private void playGame(){
-		
+		try{
+			String guess = "";
+			String secretCode = new String(SECRETCODE);
+			int guessCounter = 0;
+			do {
+				guess = promptGuess();
+				if (guess.equals("exit")) exitGame();
+				else generateGuessResponse(guess, secretCode);
+			} while (guessCounter < NUMCHANCES && !hasWon(guess));
+			gameOverText(guess);
+			br.close();
+		}
+		catch(IOException e){
+			System.out.println("Error closing reader.");
+		}
+	}
+	
+	/***********************************
+	 *****playGame() Helper Methods*****
+	 ***********************************/
+	
+	private void gameOverText(String guess){
+		if (hasWon(guess)) System.out.println("You solved it!");
+		else System.out.println("You loose :(");
+	}
+	
+	private void exitGame(){
+		System.exit(0);
+	}
+	
+	private boolean hasWon(String guess){
+		return guess.equals(SECRETCODE);
+	}
+	
+	private void generateGuessResponse(String guess, String secretCode){
+		System.out.println("");
+		checkForPlus(guess, secretCode);
+		checkForMinus(guess, secretCode);
+		System.out.println("");
+	}
+	
+	private void checkForPlus(String guess, String secretCode){
+		for(int i = 0; i < secretCode.length(); i++){
+			if(guess.charAt(i) == secretCode.charAt(i)){
+				deleteIndexFromString(guess, i);
+				deleteIndexFromString(secretCode, i);
+				System.out.print("+ ");
+				i--;
+			}
+		}
+	}
+	
+	private void checkForMinus(String guess, String secretCode){
+		for(int i = 0; i < secretCode.length(); i++){
+			if(secretCode.contains(String.valueOf(guess.charAt(i)))){
+				deleteIndexFromString(guess, i);
+				deleteIndexFromString(secretCode, i);
+				System.out.print("- ");
+				i--;
+			}
+		}
+	}
+	
+	private String deleteIndexFromString(String s, int i){
+		return new StringBuilder(s).deleteCharAt(i).toString();
 	}
 	
 	private String promptGuess(){
 		String guess = "";
-		while(!isGuessValid(guess)){
-			System.out.println("Enter your guess of 4 numbers whose values range from 1 to 6 or enter \"exit\"");
+		do{
+			System.out.println("Enter your guess of 4 numbers whose values range from 1 to 6 or enter \"exit\".");
 			try{
 				guess = br.readLine();
 			}
 			catch(IOException e){
 				System.out.println("Error reading your inout please try again.");
 			}
-		}
+		}while(!isGuessValid(guess));
 		return guess;
 	}
 	
 	private boolean isGuessValid(String guess){
-		if(!guess.matches("^[1-9]{4}$")){
+		if(!guess.matches("^[1-6]{4}$")){
 			System.out.println("Your input must be 4 numbers whose values range from 1 to 6");
 			return false;
 		}
 		return true;
 	}
 	
-	
 	public static void main(String[] args){
 		Mastermind.printInstructions();
 		Mastermind m = new Mastermind();
 		m.promptGuess();
+		m.playGame();
 	}
 	
 }
