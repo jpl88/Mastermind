@@ -12,6 +12,7 @@ public class Mastermind {
 	
 	private final String SECRETCODE;
 	private final int NUMCHANCES;
+	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
 	//Fields that are used to avoid "Magic Number's" throughout code. If implementation were to change for and acceptable secret code.
 	private final int MIN = 1;
@@ -20,7 +21,6 @@ public class Mastermind {
 	
 	
 	public Mastermind(){
-		printInstructions();
 		SECRETCODE = generateSecretCode();
 		NUMCHANCES = generateNumChances();
 	}
@@ -46,7 +46,6 @@ public class Mastermind {
 	}
 	
 	private int generateNumChances(){
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int numChances;
 		while(true){
 			System.out.println("Enter the number of chances allowed to figure out the secret code.");
@@ -65,7 +64,6 @@ public class Mastermind {
 				System.out.println("Youe input wasn't greater than 0.");
 			}
 		}
-		
 	}
 	
 	private boolean numChancesIsValid(int numChances) throws IllegalStateException{
@@ -73,8 +71,37 @@ public class Mastermind {
 		else throw new IllegalStateException();
 	}
 	
+	private void playGame(){
+		
+	}
+	
+	private String promptGuess(){
+		String guess = "";
+		while(!isGuessValid(guess)){
+			System.out.println("Enter your guess of 4 numbers whose values range from 1 to 6 or enter \"exit\"");
+			try{
+				guess = br.readLine();
+			}
+			catch(IOException e){
+				System.out.println("Error reading your inout please try again.");
+			}
+		}
+		return guess;
+	}
+	
+	private boolean isGuessValid(String guess){
+		if(!guess.matches("^[1-9]{4}$")){
+			System.out.println("Your input must be 4 numbers whose values range from 1 to 6");
+			return false;
+		}
+		return true;
+	}
+	
+	
 	public static void main(String[] args){
+		Mastermind.printInstructions();
 		Mastermind m = new Mastermind();
+		m.promptGuess();
 	}
 	
 }
