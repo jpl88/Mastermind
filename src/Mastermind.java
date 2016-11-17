@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Random;
 
 /**
  * A class that contains everything to run the Mastermind Game.
@@ -28,20 +27,15 @@ public class Mastermind {
 	private static void printInstructions(){
 		System.out.println("\nWelcome to Mastermind!\n\n"
 				+ "This application will create a secret code of 4 digits that range from 1 to 6.\n"
-				+ "You the user will define a number of chances to figure out the code.\n"
 				+ "Then when prompted, you will enter a guess and the application will generate and output based on your response.\n"
 				+ "A Plus signs indicates a correct number in the correct spot.\n"
 				+ "A Negative signs indicate a correct number in the incorrect spot.\n"
-				+ "Each position in the secret code can only be matched once.\n"
-				+ "For example, a guess of 1134 against a secret code of 1234 would get three plus signs:\n"
-				+ "One for each of the exact matches in the first, third and fourth positions.\n"
-				+ "The number match in the second position would be ignored.\n");
+				+ "Each position in the secret code can only be matched once.\n");
 	}
 	
 	private String generateSecretCode(){
 		StringBuilder sb = new StringBuilder();
-		Random r = new Random();
-		for(int i = 0; i < CODELENGTH; i++) sb.append(Character.forDigit((r.nextInt(MAX-MIN) + MIN), 10));
+		for(int i = 0; i < CODELENGTH; i++) sb.append(Character.forDigit((int)(Math.random()*MAX) + MIN,10));
 		return sb.toString();
 	}
 	
@@ -78,13 +72,13 @@ public class Mastermind {
 	private void playGame(){
 		try{
 			String guess = "";
-			String secretCode = new String(SECRETCODE);
-			int guessCounter = 0;
-			do {
+			String secretCode;
+			for(int guessCounter = 0; guessCounter < NUMCHANCES && !hasWon(guess); guessCounter++){
+				secretCode = new String(SECRETCODE);
 				guess = promptGuess();
-				if (guess.equals("exit")) exitGame();
-				else generateGuessResponse(guess, secretCode);
-			} while (guessCounter < NUMCHANCES && !hasWon(guess));
+				generateGuessResponse(guess, secretCode);
+			} 
+			System.out.println("The Secret Code was: " + SECRETCODE);
 			gameOverText(guess);
 			br.close();
 		}
@@ -99,11 +93,7 @@ public class Mastermind {
 	
 	private void gameOverText(String guess){
 		if (hasWon(guess)) System.out.println("You solved it!");
-		else System.out.println("You loose :(");
-	}
-	
-	private void exitGame(){
-		System.exit(0);
+		else System.out.println("You lose :(");
 	}
 	
 	private boolean hasWon(String guess){
@@ -111,32 +101,25 @@ public class Mastermind {
 	}
 	
 	private void generateGuessResponse(String guess, String secretCode){
-		System.out.println("");
-		checkForPlus(guess, secretCode);
-		checkForMinus(guess, secretCode);
-		System.out.println("");
-	}
-	
-	private void checkForPlus(String guess, String secretCode){
 		for(int i = 0; i < secretCode.length(); i++){
 			if(guess.charAt(i) == secretCode.charAt(i)){
-				deleteIndexFromString(guess, i);
-				deleteIndexFromString(secretCode, i);
+				guess = deleteIndexFromString(guess, i);
+				secretCode = deleteIndexFromString(secretCode, i);
 				System.out.print("+ ");
 				i--;
 			}
 		}
-	}
-	
-	private void checkForMinus(String guess, String secretCode){
 		for(int i = 0; i < secretCode.length(); i++){
-			if(secretCode.contains(String.valueOf(guess.charAt(i)))){
-				deleteIndexFromString(guess, i);
-				deleteIndexFromString(secretCode, i);
+			int index = secretCode.indexOf(guess.charAt(i));
+			if(index != -1){
+				secretCode = deleteIndexFromString(secretCode, index);
+				guess = deleteIndexFromString(guess, i);
 				System.out.print("- ");
 				i--;
 			}
 		}
+
+		System.out.println("");
 	}
 	
 	private String deleteIndexFromString(String s, int i){
@@ -146,7 +129,7 @@ public class Mastermind {
 	private String promptGuess(){
 		String guess = "";
 		do{
-			System.out.println("Enter your guess of 4 numbers whose values range from 1 to 6 or enter \"exit\".");
+			System.out.println("Enter your guess of 4 numbers whose values range from 1 to 6 or quit with ctrl + C.");
 			try{
 				guess = br.readLine();
 			}
@@ -168,7 +151,6 @@ public class Mastermind {
 	public static void main(String[] args){
 		Mastermind.printInstructions();
 		Mastermind m = new Mastermind();
-		m.promptGuess();
 		m.playGame();
 	}
 	
