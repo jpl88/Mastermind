@@ -28,6 +28,7 @@ public class Mastermind {
 	 */
 	public Mastermind(){
 		SECRETCODE = generateSecretCode();
+		System.out.println(SECRETCODE);
 		NUMCHANCES = generateNumChances();
 	}
 	
@@ -218,7 +219,7 @@ public class Mastermind {
 	 */
 	private boolean isGuessValid(String guess){
 		//Regex expression of char's between MIN and MAX repeated CODELENGTH times.
-		if(!guess.matches("^[MIN-MAX]{CODELENGTH}$")){
+		if(!guess.matches("^["+ MIN + "-" + MAX + "]{" + CODELENGTH + "}$")){
 			System.out.println("Your input must be 4 numbers whose values range from 1 to 6");
 			return false;
 		}
@@ -227,7 +228,7 @@ public class Mastermind {
 	
 	/**
 	 * A main method that runs the game.
-	 * @param args String of arguemtns that aren't used.
+	 * @param args String of arguments that aren't used.
 	 */
 	public static void main(String[] args){
 		//Print instructions.
